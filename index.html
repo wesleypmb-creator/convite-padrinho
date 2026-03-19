@@ -19,14 +19,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: screen;
+            min-height: 100vh;
         }
         .font-cursive { font-family: 'Great Vibes', cursive; }
         .font-serif { font-family: 'Playfair Display', serif; }
         .font-imperial { font-family: 'Cinzel', serif; }
         .gold-text { color: #bfa37e; }
         
-        /* Estrutura do Envelope Medieval */
         .envelope-wrapper {
             perspective: 1500px;
             transition: all 1s ease-in-out;
@@ -65,7 +64,6 @@
             z-index: 4;
         }
 
-        /* Lacre de Cera Imperial */
         .wax-seal {
             position: absolute;
             top: 110px;
@@ -85,11 +83,11 @@
             border: 2px solid #8b1515;
         }
 
-        /* Efeitos de Abertura */
         .opened .envelope-flap { transform: rotateX(180deg); z-index: 1; }
         .opened .wax-seal { opacity: 0; transform: translateX(-50%) translateY(-40px) scale(0.8); }
         .opened .card-container { transform: translateY(-200px) scale(1.05); z-index: 10; opacity: 1; pointer-events: auto; }
         .opened .envelope-wrapper { margin-top: 150px; }
+        .opened #music-control { opacity: 1; pointer-events: auto; }
 
         .card-container {
             position: absolute;
@@ -101,7 +99,6 @@
             transition: all 1s 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* Design Interno Floral */
         .bg-floral {
             background-color: #fff;
             position: relative;
@@ -116,13 +113,60 @@
         .top-left { top: -10px; left: -10px; }
         .bottom-right { bottom: -10px; right: -10px; transform: rotate(180deg); }
 
-        @media print { .no-print { display: none; } }
+        /* Botão de Música */
+        #music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s 1.5s ease;
+        }
+        .music-btn {
+            background: #bfa37e;
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: none;
+            cursor: pointer;
+        }
+        .music-pulse {
+            animation: pulse-music 2s infinite;
+        }
+        @keyframes pulse-music {
+            0% { box-shadow: 0 0 0 0 rgba(191, 163, 126, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(191, 163, 126, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(191, 163, 126, 0); }
+        }
     </style>
 </head>
-<body class="p-4 overflow-y-auto min-h-screen flex items-center justify-center">
+<body>
+
+    <!-- Controle de Áudio Oculto - Canção da América -->
+    <audio id="bgMusic" loop>
+        <source src="https://www.bensound.com/bensound-music/bensound-memories.mp3" type="audio/mpeg">
+        Seu navegador não suporta áudio.
+    </audio>
+
+    <!-- Botão Flutuante de Música -->
+    <div id="music-control">
+        <button onclick="toggleMusic()" id="musicBtn" class="music-btn music-pulse">
+            <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
+            <svg id="pauseIcon" style="display:none" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </button>
+    </div>
 
     <div id="main-wrapper" class="envelope-wrapper">
-        <!-- Envelope principal -->
         <div id="envelope-click" class="envelope" onclick="openEnvelope()">
             <div class="envelope-flap"></div>
             <div class="envelope-front"></div>
@@ -131,12 +175,11 @@
                 <span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">P&W</span>
             </div>
 
-            <div class="absolute inset-0 flex flex-col items-center justify-end pb-8 z-[6]">
+            <div class="absolute inset-0 flex flex-col items-center justify-end pb-8 z-10">
                 <p class="font-imperial text-[9px] uppercase tracking-[0.3em] text-[#5c4a33] mb-2 font-bold">Documento Imperial</p>
                 <button class="font-serif italic text-[#7a1212] text-xs px-4 py-1 animate-bounce uppercase tracking-widest">Toque para abrir</button>
             </div>
 
-            <!-- Cartão do Convite (Interior) -->
             <div class="card-container px-2">
                 <div id="convite" class="bg-floral max-w-lg w-full shadow-2xl rounded-lg p-6 md:p-10 border border-stone-200 relative mx-auto">
                     
@@ -151,7 +194,7 @@
                         <div class="w-12 h-px bg-stone-300 mx-auto mb-6"></div>
 
                         <p class="text-stone-600 text-sm leading-relaxed mb-6 italic px-4">
-                            "Existem pessoas que tornam nossa caminhada mais bonita. Vocês são parte da nossa história e não poderíamos dizer 'sim' sem vocês ao nosso lado."
+                            "Amigo é coisa para se guardar debaixo de sete chaves, dentro do coração..."
                         </p>
 
                         <div class="space-y-4 mb-8">
@@ -190,7 +233,6 @@
                             </div>
                         </div>
 
-                        <!-- Contador de Tempo -->
                         <div class="flex justify-center space-x-4 mb-4 opacity-70 scale-90">
                             <div class="text-center">
                                 <span id="days" class="block text-xl font-serif text-stone-800">00</span>
@@ -218,20 +260,50 @@
     </div>
 
     <script>
-        // Função para disparar a animação de abertura
+        const audio = document.getElementById("bgMusic");
+        const playIcon = document.getElementById("playIcon");
+        const pauseIcon = document.getElementById("pauseIcon");
+        const musicBtn = document.getElementById("musicBtn");
+
         function openEnvelope() {
             document.getElementById('main-wrapper').classList.add('opened');
             document.getElementById('envelope-click').onclick = null;
             document.getElementById('envelope-click').style.cursor = 'default';
+            
+            // Tenta iniciar a música quando abrir o convite
+            audio.play().then(() => {
+                updateMusicUI(true);
+            }).catch(() => {
+                console.log("Reprodução automática bloqueada pelo navegador.");
+            });
         }
 
-        // Lógica do Contador Regressivo
-        const targetDate = new Date("May 30, 2026 17:30:00").getTime();
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                updateMusicUI(true);
+            } else {
+                audio.pause();
+                updateMusicUI(false);
+            }
+        }
 
+        function updateMusicUI(isPlaying) {
+            if (isPlaying) {
+                playIcon.style.display = "none";
+                pauseIcon.style.display = "block";
+                musicBtn.classList.add("music-pulse");
+            } else {
+                playIcon.style.display = "block";
+                pauseIcon.style.display = "none";
+                musicBtn.classList.remove("music-pulse");
+            }
+        }
+
+        const targetDate = new Date("May 30, 2026 17:30:00").getTime();
         function updateCountdown() {
             const now = new Date().getTime();
             const distance = targetDate - now;
-
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -242,7 +314,6 @@
                 document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
             }
         }
-
         setInterval(updateCountdown, 1000);
         updateCountdown();
     </script>
